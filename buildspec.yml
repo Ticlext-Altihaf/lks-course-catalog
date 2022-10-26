@@ -2,9 +2,9 @@ version: 0.2
 
 env: # Create the environment
  variables:
-   ECR_REPO: YOUR ECR_REPO
-   ECR REGION: YOUR ECR REGION 
-   CONTAINER_NAME: YOUR CONTAINER_NAME
+   ECR_REPO: course
+   ECR REGION: us-east-1 
+   CONTAINER_NAME: catalog
 
 phases:
  install: # Install runtime
