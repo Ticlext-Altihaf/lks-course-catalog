@@ -18,6 +18,7 @@ phases:
     - aws ecr get-login-password --region $ECR_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$ECR_REGION.amazonaws.com
     - sudo yum install -y gcc-c++ make
     - curl -sL https://rpm.nodesource.com/setup_14.x | sudo -E bash -
+    - sudo yum install -y nodejs
     - npm install
   build: # In This phase you must Run Unit testing and Build an image from Dockerfile
    commands:
