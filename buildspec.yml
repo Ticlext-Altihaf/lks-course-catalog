@@ -3,8 +3,9 @@ version: 0.2
 env: # Create the environment
  variables:
    ECR_REPO: course
-   ECR REGION: us-east-1 
+   ECR_REGION: us-east-1 
    CONTAINER_NAME: catalog
+   IMAGE_TAG: latest
 
 phases:
  install: # Install runtime
@@ -14,12 +15,20 @@ phases:
   pre_build: # You must use this phase for installing dependencies and login into ECR
    commands: # Run your pre-build script here
     - echo "Install Dependencies and login into ECR" 
+    - aws ecr get-login-password --region $ECR_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$ECR_REGION.amazonaws.com
+    - sudo yum install -y gcc-c++ make
+    - curl -sL https://rpm.nodesource.com/setup_14.x | sudo -E bash -
+    - npm install
   build: # In This phase you must Run Unit testing and Build an image from Dockerfile
    commands:
     - echo "Run unit testing and build docker image" 
+    - npm run testdev
+    - docker build -t $ECR_REPO:$IMAGE_TAG .
+    - docker tag $ECR_REPO:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$ECR_REGION.amazonaws.com/$ECR_REPO:$IMAGE_TAG
   post_build: # In this phase you must push the image to ECR and create an image definition 
    commands: # Run your post-build script here
     - echo "push the image to ECR.."
+    - docker push $AWS_ACCOUNT_ID.dkr.ecr.$ECR_REGION.amazonaws.com/$ECR_REPO:$IMAGE_TAG
     - printf '[{"name":"%s","imageUrl":"%s"}]'$CONTAINER_NAME ${ECR_REPO}:latest > imagedefinitions.json
     - echo "build complete..."
 
